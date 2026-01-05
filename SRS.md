@@ -23,6 +23,10 @@ header-includes:
 
 \newpage
 
+\tableofcontents
+
+\newpage
+
 # Revision History
 
 | Name     | Date       | Reason For Changes    | Version |
