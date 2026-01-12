@@ -25,6 +25,8 @@ header-includes:
 ---
 
 \newpage
+\tableofcontents
+\newpage
 
 # Revision History
 
@@ -448,6 +450,14 @@ authentication, auction management, bidding engine, and administration.
 \centering
 \includegraphics[width=0.9\textwidth]{images/erDiagram.png}
 \caption{Figure B.5: Entity Relationship Diagram for eBidX Database}
+\end{figure}
+
+### B.5 Sequence Diagram
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{images/sequence.png}
+\caption{Figure B.5: Sequence Diagram for eBidX Database}
 \end{figure}
 
 ## Appendix C: To Be Determined
