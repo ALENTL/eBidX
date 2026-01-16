@@ -1,0 +1,775 @@
+\documentclass[12pt, a4paper]{article}
+
+% ==========================================
+% PACKAGES
+% ==========================================
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{graphicx}     % For images
+\usepackage{tabularx}     % For flexible tables
+\usepackage{longtable}    % For long tables (Revision History)
+\usepackage{booktabs}     % For professional table borders
+\usepackage{hyperref}     % For clickable links
+\usepackage{float}        % For image placement [H]
+\usepackage{titlesec}     % For section formatting
+\usepackage{mathptmx}     % Times New Roman style font
+\usepackage{fancyhdr}     % For Running Headers
+\usepackage{setspace}     % For line spacing
+\usepackage{ragged2e}     % For explicit alignment commands if needed
+\usepackage{enumitem}     % To remove spacing in lists
+\usepackage[titletoc, title]{appendix} % For "Appendix A" naming in TOC
+
+% ==========================================
+% PAGE SETUP
+% ==========================================
+\geometry{left=25mm, right=25mm, top=25mm, bottom=25mm}
+\setlength{\headheight}{15pt}
+\onehalfspacing
+
+% DISABLE PARAGRAPH INDENTATION
+\setlength{\parindent}{0pt} 
+\setlength{\parskip}{1em} 
+
+% Global List Setting: Remove space between items
+\setlist{leftmargin=*, noitemsep, topsep=0pt, parsep=0pt, partopsep=0pt}
+
+% Hyperlinks
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,
+    urlcolor=black,
+    citecolor=black
+}
+
+% ==========================================
+% HEADER & FOOTER CONFIGURATION
+% ==========================================
+\pagestyle{fancy}
+\fancyhf{} % Clear all default headers/footers
+
+% Left Header: Project Title (BOLD + ITALIC)
+\fancyhead[L]{\small\textbf{\textit{Software Requirements Specification for eBidX}}}
+
+% Right Header: Page Number (BOLD + ITALIC)
+\fancyhead[R]{\small\textbf{\textit{Page \thepage}}}
+
+% Remove Footer Page Number
+\fancyfoot{}
+
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Fix Appendix Section Titles
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
+
+\begin{document}
+
+% ==========================================
+% FRONT PAGE (AdVision Style)
+% ==========================================
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+    \thispagestyle{empty}
+    
+    % Thick Black Line
+    \noindent\rule{\textwidth}{3pt}
+    
+    \vspace{2cm}
+    
+    % Right-Aligned Content
+    \begin{flushright}
+    
+        {\fontsize{32}{40}\selectfont \textbf{Software Requirements}} \\
+        {\fontsize{32}{40}\selectfont \textbf{Specification}} \\
+        
+        \vspace{2cm}
+        
+        {\Large \textbf{for}} \\
+        
+        \vspace{1cm}
+        
+        {\fontsize{32}{40}\selectfont \textbf{eBidX: Online Auction System}} \\
+        
+        \vspace{3cm}
+        
+        \textbf{Version 1.0 Approved} \\
+        
+        \vspace{3cm}
+        
+        \textbf{Prepared by:} \\
+        \vspace{0.4cm}
+        \textbf{Sreejith P V} \\
+        \textbf{Aswin Raju} \\
+        \textbf{Alen T L} \\
+        \textbf{Nikhil Sreekumar} \\
+        \textbf{Sanju M B} \\
+        \vspace{1cm}
+        \textbf{Department of Computer Science} \\
+        \vspace{0.2cm}
+        \textbf{2026-01-13}
+        
+    \end{flushright}
+\end{titlepage}
+\hypersetup{pageanchor=true}
+
+% ==========================================
+% PRELIMINARY PAGES (TOC & Revision)
+% ==========================================
+
+\newpage
+
+% Set numbering to Arabic and force start at Page 2 (Title page is implicit Page 1)
+\pagenumbering{arabic} 
+\setcounter{page}{2}
+
+% Use single spacing for TOC to make it compact and standard-looking
+{
+  \singlespacing
+  \setlength{\parskip}{0pt} % Remove extra vertical space between items
+  \tableofcontents
+}
+
+% UPDATED: Removed \newpage here to keep Revision History on the same page
+\vspace{1cm} % Add some vertical space between TOC and Revision History
+
+\section*{Revision History}
+\addcontentsline{toc}{section}{Revision History}
+
+% Wrapped in curly braces to apply bold border settings locally
+{
+    \setlength{\arrayrulewidth}{1.5pt} % Sets border thickness to 1.5pt (Bold)
+    \begin{longtable}[l]{|l|l|p{6cm}|l|}
+    \hline
+    \textbf{Name} & \textbf{Date} & \textbf{Reason for Changes} & \textbf{Version} \\ \hline
+    & & & \\ \hline
+    \end{longtable}
+}
+
+\newpage
+
+% ==========================================
+% MAIN CONTENT
+% ==========================================
+% Note: Page numbering continues sequentially from here
+
+\section{Introduction}
+
+\subsection{Purpose}
+This document specifies the Software Requirements Specification (SRS) for \textbf{eBidX}, an online auction system. The system facilitates real-time bidding on products, allowing users to list items for sale and place bids in a competitive environment. This SRS outlines the system's features, interfaces, and constraints.
+
+\subsection{Document Conventions}
+\begin{itemize}
+    \item Headings are numbered automatically.
+    \item Key terms such as \textbf{Bidder} and \textbf{Seller} are capitalized when first introduced.
+    \item Functional requirements are labeled as \textbf{REQ-1}, \textbf{REQ-2}, etc.
+    \item Placeholder values are marked as \textbf{TBD}.
+\end{itemize}
+
+\subsection{Intended Audience and Reading Suggestions}
+This document is for developers, project managers, testers, marketing teams, and end users to understand the system's functionalities, constraints, and potential use cases.
+
+\vspace{1em} % Force vertical space
+
+For better understanding, it is recommended to read in the following order:
+\begin{enumerate}[label=\Alph*., leftmargin=3em]
+    \item Introduction - Overview of the project.
+    \item Overall Description - System components and features.
+    \item External Interface Requirements - Hardware and software dependencies.
+    \item System Features - Detailed breakdown of functionalities.
+    \item Other Nonfunctional Requirements - Performance, security, and quality attributes.
+\end{enumerate}
+
+\subsection{Product Scope}
+eBidX is a feature-rich online auction marketplace designed to democratize the buying and selling process through real-time competitive bidding. The platform connects sellers looking to liquidate assets with buyers seeking value, facilitating transactions in a secure and transparent digital environment.
+
+The system's core functionality revolves around a dynamic bidding engine that supports real-time price updates via WebSockets, ensuring that all participants see the latest highest bid instantly. Beyond basic bidding, eBidX includes advanced features such as proxy bidding, watchlist management, and automated outbid notifications to keep users engaged.
+
+For administrators, the platform provides comprehensive oversight tools, including user management, listing moderation, and transaction analytics. The goal of eBidX is to create a trustworthy and efficient community-driven marketplace that overcomes the geographical and temporal limitations of traditional physical auctions.
+
+\subsection{References}
+\begin{itemize}
+    \item IEEE 29148:2018 — Systems and Software Engineering — Life Cycle Processes — Requirements Engineering
+    \item IEEE Software Requirements Specification (SRS) Template
+    \item Django Documentation
+    \item React / Vite Documentation
+\end{itemize}
+
+\section{Overall Description}
+
+\subsection{Product Perspective}
+eBidX is a robust, self-contained web application designed to facilitate secure online auctions, replacing traditional offline bidding processes with a digital real-time alternative. Unlike standard e-commerce platforms with fixed pricing, eBidX creates a dynamic marketplace where item values fluctuate based on user demand and competitive bidding. This fosters a transparent environment for fair market value discovery.
+
+The system operates as a standalone platform but is architected to scale and integrate with external services such as payment gateways and email notification systems. It acts as a comprehensive solution for managing the entire auction lifecycle, from user registration and item listing to live bidding and final transaction closure, ensuring a seamless experience for both buyers and sellers.
+
+The core components include:
+\begin{enumerate}[label=\Alph*., leftmargin=3em]
+    \item A Frontend Application (built with React.js) for browsing auctions and placing bids.
+    \item A Backend Server (built with Django REST Framework) for managing logic and authentication.
+    \item A Database (PostgreSQL) for storing user profiles, auction items, and bid logs.
+\end{enumerate}
+
+\subsection{Product Functions}
+The eBidX system will perform the following major functions:
+\begin{enumerate}[label=\Roman*., leftmargin=3em]
+    \item User Authentication \& Security: The system will facilitate secure registration and login using JWT tokens, managing roles such as Guest, Bidder, Seller, and Administrator to ensure appropriate access levels.
+    \item Auction Management: Sellers will be provided with tools to create comprehensive item listings, upload high-quality images, set base prices, and define auction durations to effectively manage their inventory.
+    \item Real-Time Bidding Engine: The system will process bids in real-time, enforcing minimum increment rules and instantly broadcasting the highest bid to all connected users via WebSockets to ensure a fair competitive environment.
+    \item Search and Discovery: Users will be able to easily locate items through an advanced search interface that supports keyword queries, category filtering, and sorting by price or time remaining.
+    \item Notification System: The platform will automatically send alerts for critical events, such as outbid notifications, auction wins, and payment confirmations, to maintain high user engagement.
+    \item Admin Controls: Administrators will have access to a centralized dashboard to moderate user activity, remove inappropriate listings, and oversee platform analytics for maintenance and compliance.
+\end{enumerate}
+
+\subsection{User Classes and Characteristics}
+eBidX will cater to the following user classes:
+
+\begin{enumerate}[label=\Roman*., leftmargin=3em]
+    \item Administrators
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item Frequency of Use: Frequent (daily or as needed).
+        \item Functions Used: Managing user accounts, moderating listings, resolving disputes, and monitoring system analytics.
+        \item Characteristics: Technical or operational staff responsible for the health and compliance of the marketplace. They ensure fair play and system stability by overseeing all activities on the platform.
+    \end{enumerate}
+    
+    \item Sellers
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item Frequency of Use: Occasional (when listing new items or checking auction status).
+        \item Functions Used: Creating auction listings, uploading images, setting base prices, and monitoring incoming bids.
+        \item Characteristics: Individuals or commercial entities wishing to liquidate assets. They seek a secure and efficient platform to maximize the value of their items through competitive bidding.
+    \end{enumerate}
+
+    \item Bidders
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item Frequency of Use: Frequent (during active auctions or while searching).
+        \item Functions Used: Searching for items, placing real-time bids, managing watchlists, and processing payments for won items.
+        \item Characteristics: Users looking for value or specific items. They rely on the real-time nature of the platform to place timely bids and track their winning status.
+    \end{enumerate}
+
+    \item Guests
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item Frequency of Use: Occasional (browsing).
+        \item Functions Used: Viewing active auctions and searching for items (read-only access).
+        \item Characteristics: Unregistered visitors exploring the platform. They cannot place bids or list items until they register for an account.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{Operating Environment}
+
+\begin{enumerate}[label=\Alph*., leftmargin=3em]
+    \item Hardware Platform:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item Client: Any desktop, laptop, or mobile device with a modern web browser.
+        \item Server: Virtual Private Server (VPS) or Cloud Instance.
+        \begin{enumerate}[label=\roman*.]
+            \item CPU: 2 vCPUs minimum (for handling concurrent WebSocket connections).
+            \item RAM: 4 GB minimum.
+            \item Storage: 25 GB SSD or higher.
+        \end{enumerate}
+    \end{enumerate}
+
+    \item Operating System:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item Client: Platform Independent (Windows, macOS, Linux, Android, iOS).
+        \item Server: Linux (Ubuntu 20.04 LTS or later recommended).
+    \end{enumerate}
+
+    \item Software Components:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item Client: Modern Web Browser (Chrome, Firefox, Safari, Edge) with JavaScript enabled.
+        \item Server:
+        \begin{enumerate}[label=\roman*.]
+            \item Python 3.9+ (Runtime environment).
+            \item PostgreSQL 13+ (Relational Database).
+            \item Redis 6+ (For WebSocket channel layers).
+            \item Nginx or Apache (Web Server/Reverse Proxy).
+        \end{enumerate}
+    \end{enumerate}
+
+    \item External Interfaces:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item Stable broadband internet connection required for real-time bidding updates.
+        \item HTTPS (Port 443) accessible for secure transactions.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{Design and Implementation Constraints}
+
+\begin{enumerate}[label=\Roman*., leftmargin=3em]
+    \item Hardware Limitations:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item The real-time nature of the bidding system places a constraint on the server hardware, which must be capable of handling high concurrency and maintaining thousands of active WebSocket connections simultaneously without latency.
+        \item Clients are assumed to have a stable broadband internet connection. Users on high-latency networks may experience delays in bid updates, which is a constraint of the real-time architecture.
+    \end{enumerate}
+
+    \item Software and Libraries:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item The frontend implementation is strictly constrained to the React.js library. This dependency requires developers to adhere to a component-based architecture and manage state effectively for real-time updates.
+        \item The backend logic must be implemented using the Django REST Framework (Python). This constrains the architectural pattern to Django's MVT model and requires adherence to Python's PEP-8 coding standards.
+        \item PostgreSQL is mandated as the database management system to ensure ACID compliance, which is non-negotiable for financial transaction integrity.
+    \end{enumerate}
+
+    \item Data Privacy and Security:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item The system must not store raw credit card details. Implementation is constrained to using token-based authentication with third-party payment processors to meet PCI-DSS standards.
+        \item All user passwords must be hashed using robust algorithms like PBKDF2 or Argon2 before storage, preventing plain-text retrieval.
+    \end{enumerate}
+
+    \item Compliance with Regulations:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item The implementation must support GDPR requirements, specifically the ability for users to export their data or request account deletion, which constrains the database schema design (cascading deletes vs. soft deletes).
+    \end{enumerate}
+
+    \item User Interface Design:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item The design must prioritize the visibility of dynamic elements like the countdown timer and current bid. The interface is constrained to update these elements via DOM manipulation without requiring full page reloads.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{User Documentation}
+
+\begin{enumerate}[label=\Alph*., leftmargin=3em]
+    \item User Manual:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item Comprehensive guide covering the complete eBidX experience, including account registration, browsing auctions, placing proxy bids, and managing seller inventory.
+        \item Format: PDF, available for download from the platform's footer.
+    \end{enumerate}
+
+    \item Online Help (Help Center):
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item A dedicated, searchable web section providing immediate answers to specific platform functionalities. It includes context-sensitive tooltips within the seller dashboard to assist with item listing.
+        \item Format: Integrated web pages accessible via the navigation bar.
+    \end{enumerate}
+
+    \item Tutorials:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item Step-by-step video guides and interactive walkthroughs demonstrating key actions such as "How to win your first auction" and "Best practices for listing items."
+        \item Format: Embedded video player and rich-text articles.
+    \end{enumerate}
+
+    \item System Administration Guide:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item Technical documentation for platform administrators detailing server maintenance, database backup procedures, user moderation tools, and resolving payment disputes.
+        \item Format: Secure PDF accessible only to users with Admin privileges.
+    \end{enumerate}
+
+    \item FAQs:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item A frequently updated list of common questions regarding payment security, shipping policies, bid retractions, and troubleshooting login issues.
+        \item Format: Collapsible web interface for easy browsing.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{Assumptions and Dependencies}
+
+\begin{enumerate}[label=\Roman*., leftmargin=3em]
+    \item Assumptions:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item It is assumed that all end users have access to a stable internet connection with sufficient bandwidth to receive real-time WebSocket updates.
+        \item Users are assumed to possess valid payment methods (Credit Card, Debit Card, or digital wallet) for processing transactions upon winning an auction.
+        \item The system clock on the hosting server is assumed to be synchronized precisely via NTP to ensure auction start and end times are strictly enforced.
+    \end{enumerate}
+
+    \item Dependencies:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item Payment Processing: The system depends entirely on third-party payment gateways (e.g., Stripe, PayPal) for handling financial transactions. Any downtime in these services will directly impact the ability to close auctions.
+        \item Email Service: The notification system relies on external SMTP providers (e.g., SendGrid, AWS SES) for delivering account verification emails and outbid alerts.
+        \item Real-Time Infrastructure: The live bidding feature is dependent on the availability and performance of the Redis backing store to manage WebSocket channel layers.
+        \item Third-Party Libraries: The project depends on the continued maintenance and compatibility of key open-source libraries (React, Django REST Framework) with current browser and server standards.
+    \end{enumerate}
+\end{enumerate}
+
+\section{External Interface Requirements}
+
+\subsection{User Interfaces}
+
+\begin{enumerate}[label=\Alph*., leftmargin=3em]
+    \item Logical Characteristics:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item The user interface shall be intuitive and navigable, requiring no formal training for standard users (bidders/sellers).
+        \item Critical real-time elements, such as the "Current Bid" and "Time Remaining," must be prominently displayed and updated dynamically without user intervention.
+        \item The layout must follow a responsive design philosophy, adapting seamlessly to desktop, tablet, and mobile screen resolutions.
+        \item Navigation should be persistent and clear, providing easy access to "My Bids," "Watchlist," and "Profile" sections from any page.
+        \item Interactive elements (buttons, forms) must provide immediate visual feedback (e.g., loading spinners, success toasts) upon user interaction.
+    \end{enumerate}
+
+    \item GUI Design Standards:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item Font: Use modern sans-serif fonts (e.g., Inter, Roboto) to ensure maximum readability across devices.
+        \item Colors: Employ a high-contrast color palette for call-to-action buttons (e.g., Green for "Bid Now", Red for "End Soon") to guide user behavior effectively.
+        \item Consistency: All forms, modal windows, and dashboards must adhere to a unified design language (Material Design or similar) to maintain visual consistency.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{Hardware Interfaces}
+
+\begin{enumerate}[label=\Roman*., leftmargin=3em]
+    \item Supported Device Types:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item Client Devices: The system allows access via any standard personal computer, laptop, tablet, or smartphone capable of running a modern web browser.
+        \item Server Hardware: The backend operates on standard virtualized server hardware (VPS) with network interfaces capable of handling high-throughput TCP/IP traffic.
+    \end{enumerate}
+
+    \item Data and Control Interactions:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item Input Devices: The system interacts with standard input hardware (keyboard, mouse, touchscreens) to receive user commands such as bid entry and navigation.
+        \item Network Interfaces: The system utilizes standard network cards (NICs) to transmit and receive data packets over the internet, adhering to standard Ethernet/Wi-Fi protocols.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{Software Interfaces}
+
+\begin{enumerate}[label=\Alph*., leftmargin=3em]
+    \item Databases:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item The system interfaces with a PostgreSQL database to persistently store and retrieve structured data, including user credentials, auction listings, and transaction history.
+        \item It also interfaces with Redis, an in-memory data structure store, to handle ephemeral data for real-time WebSocket communication and session caching.
+    \end{enumerate}
+
+    \item Libraries and Tools:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item React.js: Used for rendering the dynamic user interface in the client's browser.
+        \item Django REST Framework: Used to expose API endpoints and handle business logic on the server.
+        \item Axios/Fetch API: Used for handling HTTP requests between the client and server.
+    \end{enumerate}
+
+    \item Communication between Components:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item The frontend and backend communicate via a RESTful API for standard CRUD operations (Create, Read, Update, Delete).
+        \item Real-time updates (e.g., new bids) are pushed from the server to connected clients via the WebSocket protocol using Django Channels.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{Communications Interfaces}
+
+\begin{enumerate}[label=\Roman*., leftmargin=3em]
+    \item Web Interface:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item The system utilizes the HTTPS protocol (Hypertext Transfer Protocol Secure) for all client-server communication to ensure data integrity and privacy.
+        \item Data exchange is primarily conducted using the JSON (JavaScript Object Notation) format, which is lightweight and easily parsed by web applications.
+    \end{enumerate}
+
+    \item Data Security:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item Transport Layer Security (TLS/SSL) encryption is mandatory for all data in transit to protect against eavesdropping and man-in-the-middle attacks.
+        \item Sensitive payment data is handled via tokenization, ensuring that raw credit card numbers never traverse the primary application server.
+    \end{enumerate}
+
+    \item Real-time Data Sync:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item The system employs the Secure WebSocket (WSS) protocol to maintain persistent, full-duplex communication channels between the server and clients for instant bid updates.
+        \item Low-latency messaging is prioritized to ensure fair play, minimizing the delay between a bid submission and its reflection on other users' screens.
+    \end{enumerate}
+\end{enumerate}
+
+\section{System Features}
+
+\subsection{Auction Listing (Seller)}
+\subsubsection{Description and Priority}
+\begin{itemize}
+    \item Description: This feature enables registered Sellers to list items for auction. The Seller allows the input of item details including a descriptive title, detailed description, starting base price, and auction duration. The system validates these inputs to ensure the auction is fair and legitimate before publishing it to the marketplace.
+    \item Priority: High (Essential for inventory creation and platform utility).
+\end{itemize}
+
+\subsubsection{Stimulus / Response Sequences}
+\begin{itemize}
+    \item Stimulus 1: User clicks "Create Auction" and submits the form with item details and images.
+    \item Response 1: System verifies that the base price is positive and the end date is in the future.
+    \item Stimulus 2: User confirms the preview of the listing.
+    \item Response 2: The system saves the listing to the database and redirects the user to the item's detail page.
+    \item Stimulus 3: User attempts to submit a form with a date in the past.
+    \item Response 3: The system displays specific error messages on the form.
+\end{itemize}
+
+\subsubsection{Functional Requirements}
+\begin{itemize}
+    \item REQ-1: Base price must be a positive integer greater than zero.
+    \item REQ-2: Auction end time must be at least 1 hour in the future from the creation time.
+    \item REQ-3: Image uploads must support JPG, PNG, and WEBP formats, with a maximum size of 5MB per image.
+\end{itemize}
+
+\subsection{Bidding Engine (Bidder)}
+\subsubsection{Description and Priority}
+\begin{itemize}
+    \item Description: The Bidding Engine is the core component that handles real-time interactions between users and active auctions. It ensures that all bids are valid, higher than the current price, and placed within the auction's time window. It manages concurrency to prevent race conditions when multiple users bid simultaneously.
+    \item Priority: High (Critical core functionality).
+\end{itemize}
+
+\subsubsection{Stimulus / Response Sequences}
+\begin{itemize}
+    \item Stimulus 1: User enters a bid amount and clicks "Place Bid".
+    \item Response 1: System validates the bid amount against the current high bid + increment.
+    \item Stimulus 2: System accepts the valid bid.
+    \item Response 2: System updates the database and broadcasts the new price to all connected clients via WebSocket.
+    \item Stimulus 3: User places a bid after the auction has closed.
+    \item Response 3: System rejects the bid and displays a "Bidding Closed" error.
+\end{itemize}
+
+\subsubsection{Functional Requirements}
+\begin{itemize}
+    \item REQ-4: A new bid must exceed the current highest bid by at least the minimum bid increment (e.g., \$1.00 or 5\% of current price).
+    \item REQ-5: Bids placed after the auction end time must be instantly rejected with a "Bidding Closed" error.
+    \item REQ-6: The system shall update the highest bid display for all connected users via WebSocket within 1 second.
+\end{itemize}
+
+\subsection{Watchlist Management}
+\subsubsection{Description and Priority}
+\begin{itemize}
+    \item Description: This feature allows users to "watch" specific auctions they are interested in without placing a bid. This helps users track items and receive updates as the auction nears its conclusion.
+    \item Priority: Medium (Enhances user engagement).
+\end{itemize}
+
+\subsubsection{Stimulus / Response Sequences}
+\begin{itemize}
+    \item Stimulus 1: User clicks the "Watch" icon on an item card.
+    \item Response 1: System adds the item to the user's watchlist database table.
+    \item Stimulus 2: User views their profile dashboard.
+    \item Response 2: System displays a list of watched items with current status.
+\end{itemize}
+
+\subsubsection{Functional Requirements}
+\begin{itemize}
+    \item REQ-7: Users shall be able to add or remove active auctions from their personal watchlist.
+    \item REQ-8: The system shall provide a "My Watchlist" dashboard displaying current prices and time remaining for watched items.
+\end{itemize}
+
+\subsection{Search and Filtering}
+\subsubsection{Description and Priority}
+\begin{itemize}
+    \item Description: To enhance discoverability, the system provides a robust search engine allowing users to find items based on keywords and specific criteria.
+    \item Priority: High (Essential for navigation).
+\end{itemize}
+
+\subsubsection{Stimulus / Response Sequences}
+\begin{itemize}
+    \item Stimulus 1: User types "Laptop" into the search bar and presses Enter.
+    \item Response 1: System queries the database for items with "Laptop" in the title or description.
+    \item Stimulus 2: User applies a "Price: Low to High" filter.
+    \item Response 2: System re-renders the list sorted by current price.
+\end{itemize}
+
+\subsubsection{Functional Requirements}
+\begin{itemize}
+    \item REQ-9: Users can search for items by entering keywords matching the item title or description.
+    \item REQ-10: Search results shall be filterable by category (e.g., Electronics, Art), price range, and item condition.
+    \item REQ-11: Users can sort results by "Ending Soonest", "Newly Listed", or "Price: Low to High".
+\end{itemize}
+
+\subsection{User Notifications}
+\subsubsection{Description and Priority}
+\begin{itemize}
+    \item Description: The system automatically notifies users of critical events to keep them engaged and informed about the status of their bids and listings.
+    \item Priority: Medium (Important for user retention).
+\end{itemize}
+
+\subsubsection{Stimulus / Response Sequences}
+\begin{itemize}
+    \item Stimulus 1: A user is outbid by another participant.
+    \item Response 1: System triggers an email and in-app notification to the previous high bidder.
+    \item Stimulus 2: An auction ends successfully.
+    \item Response 2: System sends a "You Won" email to the winner and a "Item Sold" email to the seller.
+\end{itemize}
+
+\subsubsection{Functional Requirements}
+\begin{itemize}
+    \item REQ-12: A bidder shall receive an immediate notification (email/in-app) if they are outbid.
+    \item REQ-13: The seller shall be notified whenever a new bid is placed on their item.
+    \item REQ-14: Both the winner and the seller shall receive a comprehensive summary email upon the successful closure of an auction.
+\end{itemize}
+
+\subsection{Rating and Review System}
+\subsubsection{Description and Priority}
+\begin{itemize}
+    \item Description: This feature builds trust within the platform by allowing buyers and sellers to rate their transaction experience.
+    \item Priority: Low (Trust-building feature).
+\end{itemize}
+
+\subsubsection{Stimulus / Response Sequences}
+\begin{itemize}
+    \item Stimulus 1: Transaction is marked as "Completed".
+    \item Response 1: System enables the review form for both parties.
+    \item Stimulus 2: User submits a 5-star rating and comment.
+    \item Response 2: System updates the target user's public profile with the new rating average.
+\end{itemize}
+
+\subsubsection{Functional Requirements}
+\begin{itemize}
+    \item REQ-15: Winners can leave a star rating (1-5) and a text review for the seller after the auction is closed and paid for.
+    \item REQ-16: The system shall calculate and display an average reputation score on every user's public profile.
+\end{itemize}
+
+\section{Other Nonfunctional Requirements}
+
+\subsection{Performance Requirements}
+\begin{enumerate}[label=\Roman*., leftmargin=3em]
+    \item Response Time:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item WebSocket latency for bid updates must remain below 500 milliseconds for 95\% of users to ensure fair real-time competition.
+        \item General page loads should complete within 2 seconds on standard broadband connections.
+    \end{enumerate}
+    \item Concurrency:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item The system must support at least 1,000 concurrent active users during peak auction hours without performance degradation.
+    \end{enumerate}
+    \item Throughput:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item The database and backend must be optimized to handle a throughput of at least 50 bid transactions per second.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{Safety Requirements}
+\begin{enumerate}[label=\Alph*., leftmargin=3em]
+    \item Transaction Integrity: The system must enforce ACID properties on all financial transactions to prevent partial updates (e.g., deducting money without awarding the item).
+    \item Data Redundancy: Automated full database backups must be performed daily, with point-in-time recovery options available for the last 24 hours.
+    \item Failover Mechanisms: In the event of a primary server failure, traffic should automatically reroute to a standby server to minimize downtime.
+\end{enumerate}
+
+\subsection{Security Requirements}
+\begin{enumerate}[label=\Roman*., leftmargin=3em]
+    \item Authentication:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item Multi-Factor Authentication (MFA) should be available for all user accounts and mandatory for administrator accounts.
+        \item Session tokens (JWT) must have a short expiration time and be securely refreshed.
+    \end{enumerate}
+    \item Encryption:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item All sensitive data at rest (e.g., user PII, database backups) must be encrypted using AES-256 standards.
+    \end{enumerate}
+    \item Audit Logs:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item Comprehensive logs of all administrative actions and financial transactions must be maintained for at least 12 months for compliance auditing.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{Software Quality Attributes}
+\begin{enumerate}[label=\Alph*., leftmargin=3em]
+    \item Reliability: The system targets an availability of 99.9\% during scheduled auction periods.
+    \item Usability: The interface should be designed such that a new user can place a bid within 3 clicks of landing on the homepage.
+    \item Maintainability: The codebase must adhere to PEP-8 (Python) and Airbnb (React) style guides to ensure ease of future updates.
+    \item Scalability: The architecture should support horizontal scaling (adding more application servers) to handle increased load during high-traffic events.
+\end{enumerate}
+
+\subsection{Business Rules}
+\begin{enumerate}[label=\Roman*., leftmargin=3em]
+    \item Eligibility:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item Only users aged 18 and above are legally permitted to register and participate in auctions.
+    \end{enumerate}
+    \item Bidding Restrictions:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item Sellers are strictly prohibited from placing bids on their own listings (shill bidding) to artificially inflate prices.
+    \end{enumerate}
+    \item Payment Obligation:
+    \begin{enumerate}[label=\Alph*., leftmargin=2em]
+        \item Winning bidders must complete the payment process within 24 hours of the auction closing, otherwise the item may be offered to the next highest bidder.
+    \end{enumerate}
+\end{enumerate}
+
+% --- UPDATED SECTION 6: OTHER REQUIREMENTS ---
+\section{Other Requirements}
+
+\begin{enumerate}[label=\Alph*., leftmargin=3em]
+    \item Database Requirements:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item The system requires a relational database management system (PostgreSQL recommended) to handle complex relationships between users, items, and bids.
+        \item The database schema must be normalized to at least the Third Normal Form (3NF) to reduce data redundancy.
+        \item Indexing strategies must be applied to frequently queried fields (e.g., item category, end time) to optimize search performance.
+    \end{enumerate}
+
+    \item Internationalization Requirements:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item While the initial release will be in English, the system architecture must support future localization (i18n).
+        \item Currency symbols and date formats should be dynamically rendered based on the user's detected locale settings.
+    \end{enumerate}
+
+    \item Legal Requirements:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item The platform must comply with the General Data Protection Regulation (GDPR) for European users, including "Right to be Forgotten" features.
+        \item All payment handling must be compliant with the Payment Card Industry Data Security Standard (PCI-DSS).
+        \item Users must explicitly agree to the Terms of Service and Privacy Policy during registration.
+    \end{enumerate}
+
+    \item Reuse Objectives:
+    \begin{enumerate}[label=\alph*., leftmargin=2em]
+        \item The authentication module (Signup/Login/Reset Password) should be developed as a standalone component for potential reuse in other company projects.
+        \item The real-time notification service should be decoupled to allow integration with different frontend clients (e.g., mobile apps) in the future.
+    \end{enumerate}
+\end{enumerate}
+% ---------------------------------------------
+
+% ==========================================
+% APPENDICES
+% ==========================================
+\begin{appendices}
+\titleformat{\section}{\normalfont\Large\bfseries}{Appendix \thesection:}{1em}{}
+
+% Appendix A (Glossary)
+\section{Glossary}
+\begin{itemize}
+    \item Bid Increment: The minimum amount by which a new bid must exceed the previous high bid.
+    \item Sniper: A user who places a bid in the very last seconds of an auction.
+    \item Reserve Price: The minimum price a seller is willing to accept.
+    \item Proxy Bidding: Automated bidding where the system bids on behalf of the user up to a max limit.
+    \item Soft Close: Extending the auction time if a bid is placed in the final moments to prevent sniping.
+    \item JWT: JSON Web Token, used for secure transmission of information between parties.
+\end{itemize}
+
+% Appendix B (Analysis Models)
+\section{Analysis Models}
+
+\subsection{Use Case Diagram}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/useCase.png} 
+    \caption{Use Case Diagram for eBidX}
+\end{figure}
+
+\subsection{Data Flow Diagrams}
+
+\subsubsection*{Level 0: Context Diagram}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{images/dfdLevel0.png}
+    \caption{Level 0 Data Flow Diagram}
+\end{figure}
+
+\subsubsection*{Level 1: Process Decomposition}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/dfdLevel1.png}
+    \caption{Level 1 Data Flow Diagram}
+\end{figure}
+
+\subsection{Activity Diagram}
+% Removed \newpage to prevent empty page; allow natural flow
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth, height=1.2\textwidth]{images/activity.png} 
+    \caption{Activity Diagram for Bidding Process}
+\end{figure}
+
+\subsection{Entity Relationship Diagram}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/erDiagram.png}
+    \caption{Entity Relationship Diagram for eBidX Database}
+\end{figure}
+
+\subsection{Sequence Diagram}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/sequence.png}
+    \caption{Sequence Diagram for eBidX Database}
+\end{figure}
+
+% Appendix C (TBD)
+% No \newpage here to let TBD follow immediately after diagrams if space permits
+\section{To Be Determined}
+\begin{itemize}
+    \item \textbf{A. Payment Gateway:} Finalizing the choice between Stripe Connect and PayPal Marketplace for handling multi-party payments.
+    \item \textbf{B. Dispute Resolution:} Defining the exact protocol for handling item disputes (e.g., item not as described).
+    \item \textbf{C. Mobile App:} Deciding whether to build a native mobile app (React Native) or stick to a PWA (Progressive Web App).
+\end{itemize}
+
+\end{appendices}
+
+\end{document}
