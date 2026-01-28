@@ -1,6 +1,30 @@
-SRS.aux
-SRS.log
-SRS.out
-SRS.toc
+# --- Python & Django (Backend) ---
+venv/
+__pycache__/
+*.py[cod]
+*.sqlite3
+backend/media/
+backend/staticfiles/
+.env
 
-test/
+# --- Node, Bun & React (Frontend) ---
+node_modules/
+dist/
+.DS_Store
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- LaTeX (SRS Documentation) ---
+*.aux
+*.glo
+*.idx
+*.log
+*.toc
+*.ist
+*.acn
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
