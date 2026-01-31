@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Container, Card, Button, Spinner, Alert } from "react-bootstrap";
+import {
+  Container,
+  Card,
+  Button,
+  Spinner,
+  Alert,
+  Form,
+  InputGroup,
+} from "react-bootstrap";
+import CountdownTimer from "./CountdownTimer";
 
 const AuctionDetail = () => {
   const { id } = useParams();
@@ -10,9 +19,17 @@ const AuctionDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [bidAmount, setBidAmount] = useState("");
+  const [bidError, setBidError] = useState("");
+  const [bidSuccess, setBidSuccess] = useState("");
+
   const isAuthenticated = !!localStorage.getItem("token");
 
   useEffect(() => {
+    fetchAuctionData();
+  }, [id]);
+
+  const fetchAuctionData = () => {
     axios
       .get(`http://127.0.0.1:8000/api/auctions/${id}/`)
       .then((res) => {
@@ -24,7 +41,34 @@ const AuctionDetail = () => {
         setError("Item not found");
         setLoading(false);
       });
-  }, [id]);
+  };
+
+  const handleBidSubmit = async (e) => {
+    e.preventDefault();
+    setBidError("");
+    setBidSuccess("");
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await axios.post(
+        `http://127.0.0.1:8000/api/auctions/${id}/bid/`,
+        { amount: bidAmount },
+        { headers: { Authorization: `Token ${token}` } },
+      );
+
+      setBidSuccess(`Bid placed successfully! New Price: ₹${res.data.amount}`);
+      setBidAmount("");
+
+      setItem((prev) => ({ ...prev, current_price: res.data.amount }));
+    } catch (err) {
+      if (err.response && err.response.data.error) {
+        setBidError(err.response.data.error);
+      } else {
+        setBidError("Something went wrong. Try again.");
+      }
+    }
+  };
 
   if (loading)
     return (
@@ -40,6 +84,8 @@ const AuctionDetail = () => {
       </Container>
     );
 
+  console.log("Data from backend: ", item);
+
   return (
     <Container className="mt-5" style={{ maxWidth: "800px" }}>
       <Card className="shadow-lg border-0">
@@ -51,22 +97,13 @@ const AuctionDetail = () => {
           />
         )}
         <Card.Body className="p-4">
-          <div className="d-flex justify-content-between align-items-start">
-            <Card.Title as="h2" className="fw-bold">
-              {item.title}
-            </Card.Title>
-            <span
-              className={`badge ${item.condition === "new" ? "bg-success" : "bg-secondary"}`}
-            >
-              {item.condition === "new" ? "New" : "Used"}
-            </span>
-          </div>
-
-          <Card.Text className="text-muted mt-3" style={{ fontSize: "1.1rem" }}>
-            {item.description}
-          </Card.Text>
-
+          <Card.Title as="h2" className="fw-bold">
+            {item.title}
+          </Card.Title>
+          <Card.Text className="text-muted">{item.description}</Card.Text>
           <hr className="my-4" />
+
+          <CountdownTimer targetDate={item.end_date} />
 
           <div className="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -74,7 +111,7 @@ const AuctionDetail = () => {
                 Current Price
               </small>
               <h3 className="text-primary display-6 fw-bold">
-                ₹{item.base_price}
+                ₹{item.current_price}
               </h3>
             </div>
             <div className="text-end">
@@ -86,9 +123,28 @@ const AuctionDetail = () => {
           </div>
 
           {isAuthenticated ? (
-            <Button variant="success" size="lg" className="w-100 py-3 fw-bold">
-              Place Bid (Coming Soon)
-            </Button>
+            <div className="bg-light p-4 rounded">
+              <h5 className="mb-3">Place Your Bid</h5>
+
+              {bidError && <Alert variant="danger">{bidError}</Alert>}
+              {bidSuccess && <Alert variant="success">{bidSuccess}</Alert>}
+
+              <Form onSubmit={handleBidSubmit}>
+                <InputGroup className="mb-3">
+                  <InputGroup.Text>₹</InputGroup.Text>
+                  <Form.Control
+                    type="number"
+                    placeholder={`Enter amount > ${item.current_price}`}
+                    value={bidAmount}
+                    onChange={(e) => setBidAmount(e.target.value)}
+                    required
+                  />
+                  <Button variant="success" type="submit">
+                    Submit Bid
+                  </Button>
+                </InputGroup>
+              </Form>
+            </div>
           ) : (
             <Button
               variant="warning"
