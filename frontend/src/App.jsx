@@ -11,28 +11,12 @@ function App() {
     <Router>
       <NavBar />
       <Routes>
-        {/* PUBLIC ROUTE (Anyone can see) */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* PROTECTED ROUTES (Must be logged in) */}
-        <Route
-          path="/"
-          element={
-            <RequireAuth>
-              <AuctionList />
-            </RequireAuth>
-          }
-        />
-
-        <Route
-          path="/auction/:id"
-          element={
-            <RequireAuth>
-              <AuctionDetail />
-            </RequireAuth>
-          }
-        />
+        {/* OPEN TO EVERYONE (Guests included) */}
+        <Route path="/" element={<AuctionList />} />
+        <Route path="/auction/:id" element={<AuctionDetail />} />
       </Routes>
     </Router>
   );
