@@ -4,6 +4,7 @@ import AuctionList from "./components/AuctionList";
 import AuctionDetail from "./components/AuctionDetail";
 import Login from "./components/Login";
 import RequireAuth from "./components/RequireAuth";
+import Register from "./components/Register";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         {/* PUBLIC ROUTE (Anyone can see) */}
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         {/* PROTECTED ROUTES (Must be logged in) */}
         <Route
