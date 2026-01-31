@@ -47,7 +47,7 @@ const AuctionList = () => {
                 <Card.Text className="text-muted text-truncate">
                   {item.description}
                 </Card.Text>
-                <h5 className="text-primary mt-auto">₹{item.base_price}</h5>
+                <h5 className="text-primary mt-auto">₹{item.current_price}</h5>
 
                 <Link to={`/auction/${item.id}`}>
                   <Button variant="primary" className="w-100 mt-2">
