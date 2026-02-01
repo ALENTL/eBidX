@@ -3,8 +3,8 @@ import NavBar from "./components/NavBar";
 import AuctionList from "./components/AuctionList";
 import AuctionDetail from "./components/AuctionDetail";
 import Login from "./components/Login";
-import RequireAuth from "./components/RequireAuth";
 import Register from "./components/Register";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   return (
@@ -17,6 +17,7 @@ function App() {
         {/* OPEN TO EVERYONE (Guests included) */}
         <Route path="/" element={<AuctionList />} />
         <Route path="/auction/:id" element={<AuctionDetail />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   );
