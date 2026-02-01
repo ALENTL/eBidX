@@ -92,6 +92,8 @@ class UserDashboard(APIView):
         return Response(
             {
                 "bids": BidWithItemSerializer(my_bids, many=True).data,
-                "listings": AuctionItemSerializer(my_listings, many=True).data,
+                "listings": AuctionItemSerializer(
+                    my_listings, many=True, context={"request": request}
+                ).data,
             }
         )
