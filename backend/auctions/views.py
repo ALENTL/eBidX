@@ -24,10 +24,18 @@ class AuctionList(generics.ListCreateAPIView):
         serializer.save(seller=self.request.user)
 
 
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return obj.seller == request.user
+
+
 class AuctionDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = AuctionItem.objects.all()
     serializer_class = AuctionItemSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
 class PlaceBid(APIView):
