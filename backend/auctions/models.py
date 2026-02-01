@@ -33,3 +33,13 @@ class Bid(models.Model):
 
     def __str__(self):
         return f"{self.bidder.username} - {self.amount}"
+
+
+class AuctionImage(models.Model):
+    auction = models.ForeignKey(
+        AuctionItem, related_name="images", on_delete=models.CASCADE
+    )
+    image = models.ImageField(upload_to="auction_images/")
+
+    def __str__(self):
+        return f"Image for {self.auction.title}"
