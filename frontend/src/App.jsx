@@ -5,6 +5,7 @@ import AuctionDetail from "./components/AuctionDetail";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
+import CreateAuction from "./components/CreateAuction";
 
 function App() {
   return (
@@ -13,11 +14,10 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
-        {/* OPEN TO EVERYONE (Guests included) */}
         <Route path="/" element={<AuctionList />} />
         <Route path="/auction/:id" element={<AuctionDetail />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/create" element={<CreateAuction />} />
       </Routes>
     </Router>
   );
