@@ -12,7 +12,8 @@ const CreateAuction = () => {
     title: "",
     description: "",
     base_price: "",
-    condition: "used", // Default value
+    condition: "used",
+    category: "electronics",
     end_date: "",
   });
   const [images, setImages] = useState([]);
@@ -41,6 +42,7 @@ const CreateAuction = () => {
     data.append("description", formData.description);
     data.append("base_price", formData.base_price);
     data.append("condition", formData.condition);
+    data.append("category", formData.category);
     data.append("end_date", formData.end_date);
 
     for (let i = 0; i < images.length; i++) {
@@ -129,6 +131,19 @@ const CreateAuction = () => {
                   <option value="new">New</option>
                   <option value="used">Used</option>
                   <option value="refurbished">Refurbished</option>
+                </Form.Select>
+              </Form.Group>
+            </div>
+            <div className="col-md-4">
+              <Form.Group className="mb-3">
+                <Form.Label>Category</Form.Label>
+                <Form.Select name="category" onChange={handleChange}>
+                  <option value="electronics">Electronics</option>
+                  <option value="fashion">Fashion</option>
+                  <option value="home">Home</option>
+                  <option value="vehicles">Vehicles</option>
+                  <option value="toys">Toys</option>
+                  <option value="other">Other</option>
                 </Form.Select>
               </Form.Group>
             </div>
