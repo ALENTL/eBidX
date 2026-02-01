@@ -13,6 +13,13 @@ class AuctionList(generics.ListCreateAPIView):
     filter_backends = [filters.SearchFilter]
     search_fields = ["title", "description"]
 
+    def get_queryset(self):
+        queryset = AuctionItem.objects.all()
+        category = self.request.query_params.get("category")
+        if category and category != "all":
+            queryset = queryset.filter(category=category)
+        return queryset
+
     def perform_create(self, serializer):
         serializer.save(seller=self.request.user)
 
