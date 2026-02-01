@@ -30,8 +30,11 @@ const AuctionDetail = () => {
   }, [id]);
 
   const fetchAuctionData = () => {
+    const token = localStorage.getItem("token");
+    const headers = token ? { Authorization: `Token ${token}` } : {};
+
     axios
-      .get(`http://127.0.0.1:8000/api/auctions/${id}/`)
+      .get(`http://127.0.0.1:8000/api/auctions/${id}/`, { headers })
       .then((res) => {
         setItem(res.data);
         setLoading(false);
@@ -84,8 +87,6 @@ const AuctionDetail = () => {
       </Container>
     );
 
-  console.log("Data from backend: ", item);
-
   return (
     <Container className="mt-5" style={{ maxWidth: "800px" }}>
       <Card className="shadow-lg border-0">
@@ -122,7 +123,13 @@ const AuctionDetail = () => {
             </div>
           </div>
 
-          {isAuthenticated ? (
+          {item.is_owner ? (
+            <Alert variant="info" className="text-center p-4">
+              <strong>You are the seller of this item.</strong>
+              <br />
+              You cannot place bids on your own auction.
+            </Alert>
+          ) : isAuthenticated ? (
             <div className="bg-light p-4 rounded">
               <h5 className="mb-3">Place Your Bid</h5>
 
