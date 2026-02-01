@@ -15,14 +15,14 @@ const CreateAuction = () => {
     condition: "used", // Default value
     end_date: "",
   });
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState([]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+    setImages(e.target.files);
   };
 
   const handleSubmit = async (e) => {
@@ -42,8 +42,9 @@ const CreateAuction = () => {
     data.append("base_price", formData.base_price);
     data.append("condition", formData.condition);
     data.append("end_date", formData.end_date);
-    if (image) {
-      data.append("image", image);
+
+    for (let i = 0; i < images.length; i++) {
+      data.append("uploaded_images", images[i]);
     }
 
     try {
@@ -89,6 +90,7 @@ const CreateAuction = () => {
             <Form.Control
               type="file"
               accept="image/*"
+              multiple
               onChange={handleImageChange}
               required
             />
