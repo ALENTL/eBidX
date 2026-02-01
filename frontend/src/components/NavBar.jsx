@@ -28,6 +28,9 @@ const NavBar = () => {
                 <Nav.Link as={Link} to="/dashboard">
                   Dashboard
                 </Nav.Link>
+                <Nav.Link as={Link} to="/create">
+                  Sell Item
+                </Nav.Link>
                 <Button
                   variant="outline-light"
                   onClick={handleLogout}
