@@ -9,6 +9,7 @@ import {
   Alert,
   Form,
   InputGroup,
+  Carousel,
 } from "react-bootstrap";
 import CountdownTimer from "./CountdownTimer";
 
@@ -90,13 +91,33 @@ const AuctionDetail = () => {
   return (
     <Container className="mt-5" style={{ maxWidth: "800px" }}>
       <Card className="shadow-lg border-0">
-        {item.image && (
-          <Card.Img
-            variant="top"
-            src={item.image}
-            style={{ maxHeight: "400px", objectFit: "cover" }}
-          />
+        {item.images && item.images.length > 0 ? (
+          <Carousel>
+            {item.images.map((imgObj) => (
+              <Carousel.Item key={imgObj.id}>
+                <img
+                  className="d-block w-100"
+                  src={imgObj.image}
+                  alt={item.title}
+                  style={{
+                    height: "400px",
+                    objectFit: "contain",
+                    backgroundColor: "#f8f9fa",
+                  }}
+                />
+              </Carousel.Item>
+            ))}
+          </Carousel>
+        ) : (
+          item.image && (
+            <Card.Img
+              variant="top"
+              src={item.image}
+              style={{ maxHeight: "400px", objectFit: "cover" }}
+            />
+          )
         )}
+
         <Card.Body className="p-4">
           <Card.Title as="h2" className="fw-bold">
             {item.title}
