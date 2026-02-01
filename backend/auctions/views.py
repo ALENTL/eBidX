@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import AuctionItem, Bid
@@ -9,6 +9,9 @@ class AuctionList(generics.ListCreateAPIView):
     queryset = AuctionItem.objects.all()
     serializer_class = AuctionItemSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["title", "description"]
 
     def perform_create(self, serializer):
         serializer.save(seller=self.request.user)
