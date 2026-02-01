@@ -3,14 +3,29 @@ from django.contrib.auth.models import User
 
 
 class AuctionItem(models.Model):
+    CATEGORY_CHOICES = [
+        ("electronics", "Electronics"),
+        ("fashion", "Fashion"),
+        ("home", "Home & Garden"),
+        ("vehicles", "Vehicles"),
+        ("toys", "Toys & Collectibles"),
+        ("other", "Other"),
+    ]
+
     CONDITION_CHOICES = [
         ("new", "New"),
         ("used", "Used"),
     ]
+
     title = models.CharField(max_length=200)
     description = models.TextField()
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to="auction_images/", blank=True, null=True)
+
+    category = models.CharField(
+        max_length=20, choices=CATEGORY_CHOICES, default="other"
+    )
+
     condition = models.CharField(
         max_length=10, choices=CONDITION_CHOICES, default="used"
     )
