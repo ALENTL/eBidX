@@ -24,13 +24,18 @@ const NavBar = () => {
             </Nav.Link>
 
             {isAuthenticated ? (
-              <Button
-                variant="outline-light"
-                onClick={handleLogout}
-                className="ms-2"
-              >
-                Logout
-              </Button>
+              <>
+                <Nav.Link as={Link} to="/dashboard">
+                  Dashboard
+                </Nav.Link>
+                <Button
+                  variant="outline-light"
+                  onClick={handleLogout}
+                  className="ms-2"
+                >
+                  Logout
+                </Button>
+              </>
             ) : (
               <>
                 <Nav.Link as={Link} to="/login">
