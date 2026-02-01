@@ -32,6 +32,7 @@ class AuctionItemSerializer(serializers.ModelSerializer):
             "base_price",
             "current_price",
             "image",
+            "category",
             "seller",
             "condition",
             "is_active",
