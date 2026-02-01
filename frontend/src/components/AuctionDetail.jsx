@@ -24,6 +24,8 @@ const AuctionDetail = () => {
   const [bidError, setBidError] = useState("");
   const [bidSuccess, setBidSuccess] = useState("");
 
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
   const isAuthenticated = !!localStorage.getItem("token");
 
   useEffect(() => {
@@ -71,6 +73,30 @@ const AuctionDetail = () => {
       } else {
         setBidError("Something went wrong. Try again.");
       }
+    }
+  };
+
+  const handleDelete = async () => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this auction? This cannot be undone.",
+      )
+    ) {
+      return;
+    }
+
+    setDeleteLoading(true);
+    const token = localStorage.getItem("token");
+
+    try {
+      await axios.delete(`http://127.0.0.1:8000/api/auctions/${id}/`, {
+        headers: { Authorization: `Token ${token}` },
+      });
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete auction.");
+      setDeleteLoading(false);
     }
   };
 
@@ -148,7 +174,14 @@ const AuctionDetail = () => {
             <Alert variant="info" className="text-center p-4">
               <strong>You are the seller of this item.</strong>
               <br />
-              You cannot place bids on your own auction.
+              <p className="mb-3">You cannot place bids on your own auction.</p>
+              <Button
+                variant="danger"
+                onClick={handleDelete}
+                disabled={deleteLoading}
+              >
+                {deleteLoading ? "Deleting..." : "Delete Auction"}
+              </Button>
             </Alert>
           ) : isAuthenticated ? (
             <div className="bg-light p-4 rounded">
