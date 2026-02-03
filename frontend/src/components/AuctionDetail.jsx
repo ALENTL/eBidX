@@ -32,6 +32,28 @@ const AuctionDetail = () => {
     fetchAuctionData();
   }, [id]);
 
+  useEffect(() => {
+    const socket = new WebSocket(`ws://127.0.0.1:8000/ws/auction/${id}/`);
+
+    socket.onopen = () => {
+      console.log("WebSocket Connected");
+    };
+
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.message && data.message.current_price) {
+        setItem((prev) => ({
+          ...prev,
+          current_price: data.message.current_price,
+        }));
+      }
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, [id]);
+
   const fetchAuctionData = () => {
     const token = localStorage.getItem("token");
     const headers = token ? { Authorization: `Token ${token}` } : {};
@@ -65,8 +87,6 @@ const AuctionDetail = () => {
 
       setBidSuccess(`Bid placed successfully! New Price: ₹${res.data.amount}`);
       setBidAmount("");
-
-      setItem((prev) => ({ ...prev, current_price: res.data.amount }));
     } catch (err) {
       if (err.response && err.response.data.error) {
         setBidError(err.response.data.error);
