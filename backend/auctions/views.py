@@ -2,7 +2,13 @@ from rest_framework import generics, permissions, status, filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import AuctionItem, Bid
-from .serializers import AuctionItemSerializer, BidSerializer, BidWithItemSerializer
+from .serializers import (
+    AuctionItemSerializer,
+    BidSerializer,
+    BidWithItemSerializer,
+    RegisterUserSerializer,
+)
+from django.contrib.auth.models import User
 
 
 class AuctionList(generics.ListCreateAPIView):
@@ -97,3 +103,9 @@ class UserDashboard(APIView):
                 ).data,
             }
         )
+
+
+class RegisterUserView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = [permissions.AllowAny]
+    serializer_class = RegisterUserSerializer
