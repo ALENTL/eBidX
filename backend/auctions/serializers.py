@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import AuctionItem, Bid, AuctionImage
+from .models import AuctionItem, Bid, AuctionImage, WatchList
 
 
 class AuctionImageSerializer(serializers.ModelSerializer):
@@ -15,6 +15,7 @@ class AuctionItemSerializer(serializers.ModelSerializer):
     is_owner = serializers.SerializerMethodField()
 
     highest_bidder = serializers.SerializerMethodField()
+    is_watched = serializers.SerializerMethodField()
 
     images = AuctionImageSerializer(many=True, read_only=True)
 
@@ -45,6 +46,7 @@ class AuctionItemSerializer(serializers.ModelSerializer):
             "images",
             "uploaded_images",
             "highest_bidder",
+            "is_watched",
         ]
 
         read_only_fields = [
@@ -84,6 +86,12 @@ class AuctionItemSerializer(serializers.ModelSerializer):
                 auction.save()
 
         return auction
+
+    def get_is_watched(self, obj):
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            return WatchList.objects.filter(user=request.user, auction=obj).exists()
+        return False
 
 
 class BidSerializer(serializers.ModelSerializer):
