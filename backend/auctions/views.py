@@ -1,3 +1,4 @@
+from django.template import context
 from rest_framework import generics, permissions, status, filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -70,6 +71,14 @@ class PlaceBid(APIView):
                 {"error": "Amount is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
+        highest_bid = auction.bids.order_by("-amount").first()
+
+        if highest_bid and highest_bid.bidder == request.user:
+            return Response(
+                {"error": "You are already the highest bidder"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         amount = float(amount)
 
         highest_bid = auction.bids.order_by("-amount").first()
@@ -93,7 +102,14 @@ class UserDashboard(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        my_bids = Bid.objects.filter(bidder=request.user).order_by("-created_at")
+        all_bids = Bid.objects.filter(bidder=request.user).order_by("-created_at")
+
+        highest_bids = {}
+        for bid in all_bids:
+            if bid.auction.id not in highest_bids:
+                highest_bids[bid.auction.id] = bid
+
+        final_bids = list(highest_bids.values())
 
         my_listings = AuctionItem.objects.filter(seller=request.user).order_by(
             "-created_at"
@@ -101,7 +117,9 @@ class UserDashboard(APIView):
 
         return Response(
             {
-                "bids": BidWithItemSerializer(my_bids, many=True).data,
+                "bids": BidWithItemSerializer(
+                    final_bids, many=True, context={"request": request}
+                ).data,
                 "listings": AuctionItemSerializer(
                     my_listings, many=True, context={"request": request}
                 ).data,
