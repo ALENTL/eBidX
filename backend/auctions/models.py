@@ -58,3 +58,14 @@ class AuctionImage(models.Model):
 
     def __str__(self):
         return f"Image for {self.auction.title}"
+
+
+class WatchList(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlist")
+    auction = models.ForeignKey(
+        AuctionItem, on_delete=models.CASCADE, related_name="watched_by"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "auction")
