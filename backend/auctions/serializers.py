@@ -14,6 +14,8 @@ class AuctionItemSerializer(serializers.ModelSerializer):
     current_price = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
 
+    highest_bidder = serializers.SerializerMethodField()
+
     images = AuctionImageSerializer(many=True, read_only=True)
 
     uploaded_images = serializers.ListField(
@@ -42,6 +44,17 @@ class AuctionItemSerializer(serializers.ModelSerializer):
             "is_owner",
             "images",
             "uploaded_images",
+            "highest_bidder",
+        ]
+
+        read_only_fields = [
+            "id",
+            "seller",
+            "current_price",
+            "highest_bidder",
+            "is_active",
+            "created_at",
+            "is_owner",
         ]
 
     def get_current_price(self, obj):
@@ -55,6 +68,10 @@ class AuctionItemSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return obj.seller == request.user
         return False
+
+    def get_highest_bidder(self, obj):
+        highest_bid = obj.bids.order_by("-amount").first()
+        return highest_bid.bidder.id if highest_bid else None
 
     def create(self, validated_data):
         uploaded_images = validated_data.pop("uploaded_images", [])
@@ -78,11 +95,11 @@ class BidSerializer(serializers.ModelSerializer):
 
 
 class BidWithItemSerializer(serializers.ModelSerializer):
-    auction = AuctionItemSerializer(read_only=True)
+    auction_item = AuctionItemSerializer(source="auction", read_only=True)
 
     class Meta:
         model = Bid
-        fields = ["id", "amount", "created_at", "auction"]
+        fields = ["id", "amount", "created_at", "auction_item"]
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
