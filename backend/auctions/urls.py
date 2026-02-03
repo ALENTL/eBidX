@@ -12,6 +12,7 @@ from .views import (
     MarkNotificationRead,
     DeleteNotification,
     ClearAllNotifications,
+    CreateStripeCheckoutSession,
 )
 
 urlpatterns = [
@@ -35,4 +36,5 @@ urlpatterns = [
     ),
     path("notifications/<int:pk>/delete/", DeleteNotification.as_view()),
     path("notifications/clear-all/", ClearAllNotifications.as_view()),
+    path("create-payment-intent/", CreateStripeCheckoutSession.as_view()),
 ]
