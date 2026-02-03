@@ -6,6 +6,8 @@ from .views import (
     UserDashboard,
     RegisterUserView,
     CustomLoginView,
+    WatchListToggle,
+    WatchlistList,
 )
 
 urlpatterns = [
@@ -15,4 +17,10 @@ urlpatterns = [
     path("dashboard/", UserDashboard.as_view(), name="user-dashboard"),
     path("login/", CustomLoginView.as_view(), name="login"),
     path("register/", RegisterUserView.as_view(), name="register"),
+    path(
+        "auctions/<int:pk>/watchlist/",
+        WatchListToggle.as_view(),
+        name="watchlist-toggle",
+    ),
+    path("watchlist/", WatchlistList.as_view(), name="watchlist-list"),
 ]
