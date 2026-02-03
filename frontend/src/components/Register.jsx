@@ -1,76 +1,77 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Container, Form, Button, Card, Alert } from "react-bootstrap";
 
 const Register = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    password_confirm: "",
+  });
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError("");
+    setError(null);
+    setSuccess(null);
 
-    if (password !== passwordConfirm) {
-      setError("Passwords do not match");
+    if (formData.password !== formData.password_confirm) {
+      setError("Passwords do not match!");
       return;
     }
 
     try {
-      const res = await axios.post(
-        "http://127.0.0.1:8000/api/auth/registration/",
-        {
-          username: username,
-          email: email,
-          password: password,
-          password2: passwordConfirm,
-        },
-      );
+      await axios.post("http://127.0.0.1:8000/api/register/", formData);
+      setSuccess("Registration successful! Redirecting to Login...");
 
-      localStorage.setItem("token", res.data.key);
-      console.log("Registration Success! Token:", res.data.key);
-
-      navigate("/");
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
     } catch (err) {
-      console.error(err);
-      setError(
-        "Registration failed. Username may be taken or password too common.",
-      );
+      if (err.response && err.response.data.password) {
+        setError(err.response.data.password[0]);
+      } else if (err.response && err.response.data.username) {
+        setError("Username is already taken.");
+      } else {
+        setError("Registration failed.");
+      }
     }
   };
-
   return (
-    <Container
-      className="d-flex justify-content-center align-items-center"
-      style={{ minHeight: "100vh" }}
-    >
-      <Card style={{ width: "400px" }} className="shadow">
-        <Card.Body>
-          <h2 className="text-center mb-4">Create Account</h2>
+    <Container className="mt-5" style={{ maxWidth: "500px" }}>
+      <Card className="shadow p-4">
+        <h2 className="text-center mb-4">Create Account</h2>
 
-          {error && <Alert variant="danger">{error}</Alert>}
+        {success && <Alert variant="success">{success}</Alert>}
 
+        {error && <Alert variant="danger">{error}</Alert>}
+
+        {!success && (
           <Form onSubmit={handleRegister}>
             <Form.Group className="mb-3">
               <Form.Label>Username</Form.Label>
               <Form.Control
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                name="username"
+                onChange={handleChange}
                 required
               />
             </Form.Group>
-
             <Form.Group className="mb-3">
-              <Form.Label>Email (Optional)</Form.Label>
+              <Form.Label>Email</Form.Label>
               <Form.Control
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="email"
+                onChange={handleChange}
+                required
               />
             </Form.Group>
 
@@ -78,8 +79,8 @@ const Register = () => {
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                name="password"
+                onChange={handleChange}
                 required
               />
             </Form.Group>
@@ -88,17 +89,23 @@ const Register = () => {
               <Form.Label>Confirm Password</Form.Label>
               <Form.Control
                 type="password"
-                value={passwordConfirm}
-                onChange={(e) => setPasswordConfirm(e.target.value)}
+                name="password_confirm"
+                onChange={handleChange}
                 required
               />
             </Form.Group>
 
-            <Button className="w-100" type="submit">
+            <Button variant="success" type="submit" className="w-100">
               Register
             </Button>
           </Form>
-        </Card.Body>
+        )}
+
+        <div className="mt-3 text-center">
+          <small>
+            Already have an account? <Link to="/login">Login here</Link>
+          </small>
+        </div>
       </Card>
     </Container>
   );
