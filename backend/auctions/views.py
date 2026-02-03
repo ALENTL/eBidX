@@ -1,4 +1,5 @@
-from django.template import context
+import stripe
+from django.conf import settings
 from rest_framework import generics, permissions, status, filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,6 +15,8 @@ from .serializers import (
     NotificationSerializer,
 )
 from django.contrib.auth.models import User
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class AuctionList(generics.ListCreateAPIView):
@@ -223,3 +226,20 @@ class ClearAllNotifications(APIView):
     def delete(self, request):
         Notification.objects.filter(recipient=request.user).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CreateStripeCheckoutSession(APIView):
+    def post(self, request):
+        try:
+            auction_id = request.data.get("auction_id")
+            auction = AuctionItem.objects.get(id=auction_id)
+
+            amount = int(float(auction.current_price) * 100)
+
+            intent = stripe.PaymentIntent.create(
+                amount=amount, currency="inr", metadata={"auction_id": auction.id}
+            )
+
+            return Response({"clientSecret": intent.client_secret})
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
