@@ -67,58 +67,79 @@ const Dashboard = () => {
         <Alert variant="info">You haven't placed any bids yet.</Alert>
       ) : (
         <Row>
-          {data.bids.map((bid) => (
-            <Col md={6} lg={4} key={bid.id} className="mb-4">
-              <Card className="shadow-sm h-100">
-                <div style={{ height: "150px", overflow: "hidden" }}>
-                  <Card.Img
-                    variant="top"
-                    src={bid.auction.image}
-                    style={{
-                      objectFit: "cover",
-                      height: "100%",
-                      width: "100%",
-                    }}
-                  />
-                </div>
-                <Card.Body>
-                  <Card.Title className="h6">{bid.auction.title}</Card.Title>
-                  <div className="d-flex justify-content-between mb-2">
-                    <span className="text-muted small">My Bid:</span>
-                    <span className="fw-bold text-primary">₹{bid.amount}</span>
-                  </div>
-                  <div className="d-flex justify-content-between">
-                    <span className="text-muted small">Current Price:</span>
-                    <span className="fw-bold">
-                      ₹{bid.auction.current_price}
-                    </span>
-                  </div>
+          {data.bids.map((bid) => {
+            const item = bid.auction_item;
+            const imageUrl =
+              item.images && item.images.length > 0
+                ? item.images[0].image
+                : null;
 
-                  <div className="mt-3 text-center">
-                    {parseFloat(bid.amount) >=
-                    parseFloat(bid.auction.current_price) ? (
-                      <Badge bg="success" className="w-100 py-2">
-                        Winning
-                      </Badge>
+            return (
+              <Col md={6} lg={4} key={bid.id} className="mb-4">
+                <Card className="shadow-sm h-100">
+                  <div
+                    style={{
+                      height: "150px",
+                      overflow: "hidden",
+                      background: "#f8f9fa",
+                    }}
+                  >
+                    {imageUrl ? (
+                      <Card.Img
+                        variant="top"
+                        src={imageUrl}
+                        style={{
+                          objectFit: "cover",
+                          height: "100%",
+                          width: "100%",
+                        }}
+                      />
                     ) : (
-                      <Badge bg="danger" className="w-100 py-2">
-                        Outbid
-                      </Badge>
+                      <div className="d-flex align-items-center justify-content-center h-100 text-muted">
+                        No Image
+                      </div>
                     )}
                   </div>
+                  <Card.Body>
+                    <Card.Title className="h6">{item.title}</Card.Title>
 
-                  <Button
-                    variant="outline-dark"
-                    size="sm"
-                    className="w-100 mt-2"
-                    onClick={() => navigate(`/auction/${bid.auction.id}`)}
-                  >
-                    View Auction
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
+                    <div className="d-flex justify-content-between mb-2">
+                      <span className="text-muted small">My Bid:</span>
+                      <span className="fw-bold text-primary">
+                        ₹{bid.amount}
+                      </span>
+                    </div>
+                    <div className="d-flex justify-content-between">
+                      <span className="text-muted small">Current Price:</span>
+                      <span className="fw-bold">₹{item.current_price}</span>
+                    </div>
+
+                    <div className="mt-3 text-center">
+                      {parseFloat(bid.amount) >=
+                      parseFloat(item.current_price) ? (
+                        <Badge bg="success" className="w-100 py-2">
+                          Winning
+                        </Badge>
+                      ) : (
+                        <Badge bg="danger" className="w-100 py-2">
+                          Outbid
+                        </Badge>
+                      )}
+                    </div>
+
+                    <Button
+                      variant="outline-dark"
+                      size="sm"
+                      className="w-100 mt-2"
+                      onClick={() => navigate(`/auction/${item.id}`)}
+                    >
+                      View Auction
+                    </Button>
+                  </Card.Body>
+                </Card>
+              </Col>
+            );
+          })}
         </Row>
       )}
 
@@ -129,39 +150,56 @@ const Dashboard = () => {
         </Alert>
       ) : (
         <Row>
-          {data.listings.map((item) => (
-            <Col md={4} key={item.id} className="mb-4">
-              <Card className="h-100 border-0 shadow-sm bg-light">
-                <div style={{ height: "100px", overflow: "hidden" }}>
-                  {item.image && (
-                    <Card.Img
-                      variant="top"
-                      src={item.image}
-                      style={{
-                        objectFit: "cover",
-                        height: "100%",
-                        width: "100%",
-                      }}
-                    />
-                  )}
-                </div>
-                <Card.Body>
-                  <Card.Title className="h6">{item.title}</Card.Title>
-                  <Card.Text className="small text-muted">
-                    Current Price: ₹{item.current_price}
-                  </Card.Text>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="w-100"
-                    onClick={() => navigate(`/auction/${item.id}`)}
+          {data.listings.map((item) => {
+            const imageUrl =
+              item.images && item.images.length > 0
+                ? item.images[0].image
+                : null;
+
+            return (
+              <Col md={4} key={item.id} className="mb-4">
+                <Card className="h-100 border-0 shadow-sm bg-light">
+                  <div
+                    style={{
+                      height: "100px",
+                      overflow: "hidden",
+                      background: "#e9ecef",
+                    }}
                   >
-                    View My Item
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
+                    {imageUrl ? (
+                      <Card.Img
+                        variant="top"
+                        src={imageUrl}
+                        style={{
+                          objectFit: "cover",
+                          height: "100%",
+                          width: "100%",
+                        }}
+                      />
+                    ) : (
+                      <div className="d-flex align-items-center justify-content-center h-100 small text-muted">
+                        No Image
+                      </div>
+                    )}
+                  </div>
+                  <Card.Body>
+                    <Card.Title className="h6">{item.title}</Card.Title>
+                    <Card.Text className="small text-muted">
+                      Current Price: ₹{item.current_price}
+                    </Card.Text>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="w-100"
+                      onClick={() => navigate(`/auction/${item.id}`)}
+                    >
+                      View My Item
+                    </Button>
+                  </Card.Body>
+                </Card>
+              </Col>
+            );
+          })}
         </Row>
       )}
     </Container>
