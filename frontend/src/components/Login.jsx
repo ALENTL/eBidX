@@ -18,6 +18,7 @@ const Login = () => {
         password: password,
       });
 
+      localStorage.setItem("user_id", res.data.user_id);
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("username", username);
       window.location.href = "/";
