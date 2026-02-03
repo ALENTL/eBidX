@@ -6,6 +6,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
 import CreateAuction from "./components/CreateAuction";
+import WatchList from "./components/WatchList";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/auction/:id" element={<AuctionDetail />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/create" element={<CreateAuction />} />
+        <Route path="/watchlist" element={<WatchList />} />
       </Routes>
     </Router>
   );
