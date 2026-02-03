@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from .models import AuctionItem, Bid
+from .models import AuctionItem, Bid, WatchList
 from .serializers import (
     AuctionItemSerializer,
     BidSerializer,
@@ -146,3 +146,35 @@ class CustomLoginView(ObtainAuthToken):
         return Response(
             {"token": token.key, "user_id": user.pk, "username": user.username}
         )
+
+
+class WatchListToggle(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            auction = AuctionItem.objects.get(pk=pk)
+        except AuctionItem.DoesNotExist:
+            return Response({"error": "Not found"}, status=404)
+
+        watchlist_item, created = WatchList.objects.get_or_create(
+            user=request.user, auction=auction
+        )
+
+        if not created:
+            watchlist_item.delete()
+            return Response({"watched": False, "message": "Removed from watchlist"})
+
+        return Response({"watched": True, "message": "Added to watchlist"})
+
+
+class WatchlistList(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        watched_items = AuctionItem.objects.filter(watched_by__user=request.user)
+
+        serializer = AuctionItemSerializer(
+            watched_items, many=True, context={"request": request}
+        )
+        return Response(serializer.data)
