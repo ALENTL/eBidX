@@ -7,6 +7,8 @@ import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
 import CreateAuction from "./components/CreateAuction";
 import WatchList from "./components/WatchList";
+import Checkout from "./pages/Checkout";
+import RequireAuth from "./components/RequireAuth";
 
 function App() {
   return (
@@ -20,6 +22,14 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/create" element={<CreateAuction />} />
         <Route path="/watchlist" element={<WatchList />} />
+        <Route
+          path="/checkout/:id"
+          element={
+            <RequireAuth>
+              <Checkout />
+            </RequireAuth>
+          }
+        />
       </Routes>
     </Router>
   );
