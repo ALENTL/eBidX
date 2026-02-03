@@ -5,12 +5,13 @@ from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from .models import AuctionItem, Bid, WatchList
+from .models import AuctionItem, Bid, WatchList, Notification
 from .serializers import (
     AuctionItemSerializer,
     BidSerializer,
     BidWithItemSerializer,
     RegisterUserSerializer,
+    NotificationSerializer,
 )
 from django.contrib.auth.models import User
 
@@ -178,3 +179,47 @@ class WatchlistList(APIView):
             watched_items, many=True, context={"request": request}
         )
         return Response(serializer.data)
+
+
+class NotificationList(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        notifs = Notification.objects.filter(recipient=request.user).order_by(
+            "is_read", "-created_at"
+        )[:20]
+        serializer = NotificationSerializer(notifs, many=True)
+        return Response(serializer.data)
+
+
+class MarkNotificationRead(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            notif = Notification.objects.get(pk=pk, recipient=request.user)
+            notif.is_read = True
+            notif.save()
+            return Response({"status": "marked read"})
+        except Notification.DoesNotExist:
+            return Response({"error": "Not found"}, status=404)
+
+
+class DeleteNotification(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, pk):
+        try:
+            notif = Notification.objects.get(pk=pk, recipient=request.user)
+            notif.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Notification.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class ClearAllNotifications(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request):
+        Notification.objects.filter(recipient=request.user).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
