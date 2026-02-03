@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import AuctionItem, Bid, AuctionImage, WatchList
+from .models import AuctionItem, Bid, AuctionImage, WatchList, Notification
 
 
 class AuctionImageSerializer(serializers.ModelSerializer):
@@ -130,3 +130,10 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             password=validated_data["password"],
         )
         return user
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ["id", "message", "link", "is_read", "created_at"]
+        read_only_fields = ["id", "message", "link", "created_at"]
