@@ -1,27 +1,28 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Container, Form, Button, Card, Alert } from "react-bootstrap";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/auth/login/", {
+      const res = await axios.post("http://127.0.0.1:8000/api/login/", {
         username: username,
         password: password,
       });
 
       localStorage.setItem("token", res.data.key);
-      navigate("/");
+      localStorage.setItem("username", username);
+      window.location.href = "/";
     } catch (err) {
+      console.error(err);
       setError("Invalid username or password");
     }
   };
@@ -62,6 +63,11 @@ const Login = () => {
               Login
             </Button>
           </Form>
+          <div className="w-100 text-center mt-3">
+            <small>
+              Don't have an account? <Link to="/register">Register here</Link>
+            </small>
+          </div>
         </Card.Body>
       </Card>
     </Container>
