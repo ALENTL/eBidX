@@ -31,6 +31,9 @@ const NavBar = () => {
                 <Nav.Link as={Link} to="/create">
                   Sell Item
                 </Nav.Link>
+                <Nav.Link as={Link} to="/watchlist">
+                  Watchlisted
+                </Nav.Link>
                 <Button
                   variant="outline-light"
                   onClick={handleLogout}
