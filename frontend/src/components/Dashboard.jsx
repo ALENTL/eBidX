@@ -33,7 +33,7 @@ const Dashboard = () => {
       const res = await axios.get("http://127.0.0.1:8000/api/dashboard/", {
         headers: { Authorization: `Token ${token}` },
       });
-      setData(res.data);
+      setData(res.data || { bids: [], listings: [] });
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -63,16 +63,16 @@ const Dashboard = () => {
       </div>
 
       <h4 className="mb-3 border-bottom pb-2">My Recent Bids</h4>
-      {data.bids.length === 0 ? (
+      {data?.bids?.length === 0 ? (
         <Alert variant="info">You haven't placed any bids yet.</Alert>
       ) : (
         <Row>
-          {data.bids.map((bid) => {
-            const item = bid.auction_item;
+          {data?.bids?.map((bid) => {
+            const item = bid.auction_item || {};
             const imageUrl =
-              item.images && item.images.length > 0
-                ? item.images[0].image
-                : null;
+              item?.images?.length > 0 ? item.images[0].image : null;
+
+            if (!item.id) return null;
 
             return (
               <Col md={6} lg={4} key={bid.id} className="mb-4">
@@ -101,7 +101,9 @@ const Dashboard = () => {
                     )}
                   </div>
                   <Card.Body>
-                    <Card.Title className="h6">{item.title}</Card.Title>
+                    <Card.Title className="h6">
+                      {item.title || "Unknown Item"}
+                    </Card.Title>
 
                     <div className="d-flex justify-content-between mb-2">
                       <span className="text-muted small">My Bid:</span>
@@ -111,12 +113,14 @@ const Dashboard = () => {
                     </div>
                     <div className="d-flex justify-content-between">
                       <span className="text-muted small">Current Price:</span>
-                      <span className="fw-bold">₹{item.current_price}</span>
+                      <span className="fw-bold">
+                        ₹{item.current_price || "N/A"}
+                      </span>
                     </div>
 
                     <div className="mt-3 text-center">
                       {parseFloat(bid.amount) >=
-                      parseFloat(item.current_price) ? (
+                      parseFloat(item.current_price || 99999999) ? (
                         <Badge bg="success" className="w-100 py-2">
                           Winning
                         </Badge>
@@ -144,17 +148,15 @@ const Dashboard = () => {
       )}
 
       <h4 className="mt-5 mb-3 border-bottom pb-2">My Listings</h4>
-      {data.listings.length === 0 ? (
+      {data?.listings?.length === 0 ? (
         <Alert variant="light" className="border">
           You haven't listed any items for sale.
         </Alert>
       ) : (
         <Row>
-          {data.listings.map((item) => {
+          {data?.listings?.map((item) => {
             const imageUrl =
-              item.images && item.images.length > 0
-                ? item.images[0].image
-                : null;
+              item?.images?.length > 0 ? item.images[0].image : null;
 
             return (
               <Col md={4} key={item.id} className="mb-4">
