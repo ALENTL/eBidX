@@ -47,11 +47,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "auctions",
     "rest_framework.authtoken",
-    "dj_rest_auth",
-    "django.contrib.sites",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
     "channels",
 ]
 
@@ -64,7 +59,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
-    "allauth.account.middleware.AccountMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
@@ -147,16 +141,11 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-SITE_ID = 1
-
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
 }
-
-# Disable Email Verification
-ACCOUNT_EMAIL_VERIFICATION = "none"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
