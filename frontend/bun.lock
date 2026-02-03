@@ -5,6 +5,8 @@
     "": {
       "name": "frontend",
       "dependencies": {
+        "@stripe/react-stripe-js": "^5.6.0",
+        "@stripe/stripe-js": "^8.7.0",
         "axios": "^1.13.4",
         "bootstrap": "^5.3.8",
         "react": "^19.2.0",
@@ -154,6 +156,10 @@
     "@rolldown/binding-win32-x64-msvc": ["@rolldown/binding-win32-x64-msvc@1.0.0-beta.50", "", { "os": "win32", "cpu": "x64" }, "sha512-4qU4x5DXWB4JPjyTne/wBNPqkbQU8J45bl21geERBKtEittleonioACBL1R0PsBu0Aq21SwMK5a9zdBkWSlQtQ=="],
 
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.0-beta.53", "", {}, "sha512-vENRlFU4YbrwVqNDZ7fLvy+JR1CRkyr01jhSiDpE1u6py3OMzQfztQU2jxykW3ALNxO4kSlqIDeYyD0Y9RcQeQ=="],
+
+    "@stripe/react-stripe-js": ["@stripe/react-stripe-js@5.6.0", "", { "dependencies": { "prop-types": "^15.7.2" }, "peerDependencies": { "@stripe/stripe-js": ">=8.0.0 <9.0.0", "react": ">=16.8.0 <20.0.0", "react-dom": ">=16.8.0 <20.0.0" } }, "sha512-tucu/vTGc+5NXbo2pUiaVjA4ENdRBET8qGS00BM4BAU8J4Pi3eY6BHollsP2+VSuzzlvXwMg0it3ZLhbCj2fPg=="],
+
+    "@stripe/stripe-js": ["@stripe/stripe-js@8.7.0", "", {}, "sha512-tNUerSstwNC1KuHgX4CASGO0Md3CB26IJzSXmVlSuFvhsBP4ZaEPpY4jxWOn9tfdDscuVT4Kqb8cZ2o9nLCgRQ=="],
 
     "@swc/helpers": ["@swc/helpers@0.5.18", "", { "dependencies": { "tslib": "^2.8.0" } }, "sha512-TXTnIcNJQEKwThMMqBXsZ4VGAza6bvN4pa41Rkqoio6QBKMvo+5lexeTMScGCIxtzgQJzElcvIltani+adC5PQ=="],
 
