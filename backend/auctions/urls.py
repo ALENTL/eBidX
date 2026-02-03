@@ -8,6 +8,10 @@ from .views import (
     CustomLoginView,
     WatchListToggle,
     WatchlistList,
+    NotificationList,
+    MarkNotificationRead,
+    DeleteNotification,
+    ClearAllNotifications,
 )
 
 urlpatterns = [
@@ -23,4 +27,12 @@ urlpatterns = [
         name="watchlist-toggle",
     ),
     path("watchlist/", WatchlistList.as_view(), name="watchlist-list"),
+    path("notifications/", NotificationList.as_view(), name="notifications"),
+    path(
+        "notifications/<int:pk>/read/",
+        MarkNotificationRead.as_view(),
+        name="notification-read",
+    ),
+    path("notifications/<int:pk>/delete/", DeleteNotification.as_view()),
+    path("notifications/clear-all/", ClearAllNotifications.as_view()),
 ]
