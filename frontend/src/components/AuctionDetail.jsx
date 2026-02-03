@@ -25,10 +25,15 @@ const AuctionDetail = () => {
   const [bidSuccess, setBidSuccess] = useState("");
 
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   const isAuthenticated = !!localStorage.getItem("token");
 
   useEffect(() => {
+    const storedUserId = localStorage.getItem("user_id");
+    if (storedUserId) {
+      setUserId(parseInt(storedUserId));
+    }
     fetchAuctionData();
   }, [id]);
 
@@ -39,14 +44,8 @@ const AuctionDetail = () => {
       console.log("WebSocket Connected");
     };
 
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.message && data.message.current_price) {
-        setItem((prev) => ({
-          ...prev,
-          current_price: data.message.current_price,
-        }));
-      }
+    socket.onmessage = () => {
+      fetchAuctionData();
     };
 
     return () => {
@@ -203,6 +202,14 @@ const AuctionDetail = () => {
                 {deleteLoading ? "Deleting..." : "Delete Auction"}
               </Button>
             </Alert>
+          ) : item.highest_bidder === userId ? (
+            <div className="text-center p-4 bg-light rounded border border-success">
+              <div className="display-4 text-success mb-2">🎉</div>
+              <h3 className="text-success fw-bold">You are winning!</h3>
+              <p className="text-muted">
+                Your bid of ₹{item.current_price} is currently the highest.
+              </p>
+            </div>
           ) : isAuthenticated ? (
             <div className="bg-light p-4 rounded">
               <h5 className="mb-3">Place Your Bid</h5>
