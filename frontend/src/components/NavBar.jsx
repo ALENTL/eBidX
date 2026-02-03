@@ -13,7 +13,7 @@ const NavBar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user_id");
-    navigate("/login");
+    navigate("/");
   };
 
   const fetchNotifications = async () => {
