@@ -26,6 +26,7 @@ const AuctionDetail = () => {
 
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [isWatched, setIsWatched] = useState(false);
 
   const isAuthenticated = !!localStorage.getItem("token");
 
@@ -36,6 +37,12 @@ const AuctionDetail = () => {
     }
     fetchAuctionData();
   }, [id]);
+
+  useEffect(() => {
+    if (item) {
+      setIsWatched(item.is_watched);
+    }
+  }, [item]);
 
   useEffect(() => {
     const socket = new WebSocket(`ws://127.0.0.1:8000/ws/auction/${id}/`);
@@ -68,6 +75,25 @@ const AuctionDetail = () => {
         setError("Item not found");
         setLoading(false);
       });
+  };
+
+  const toggleWatchlist = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        `http://127.0.0.1:8000/api/auctions/${id}/watchlist/`,
+        {},
+        { headers: { Authorization: `Token ${token}` } },
+      );
+      setIsWatched(res.data.watched);
+    } catch (err) {
+      console.error("Watchlist failed", err);
+    }
   };
 
   const handleBidSubmit = async (e) => {
@@ -164,9 +190,22 @@ const AuctionDetail = () => {
         )}
 
         <Card.Body className="p-4">
-          <Card.Title as="h2" className="fw-bold">
-            {item.title}
-          </Card.Title>
+          <div className="d-flex justify-content-between align-items-start">
+            <Card.Title as="h2" className="fw-bold">
+              {item.title}
+            </Card.Title>
+
+            <Button
+              variant="link"
+              onClick={toggleWatchlist}
+              className="p-0 text-decoration-none"
+              style={{ fontSize: "2rem", lineHeight: "1" }}
+              title={isWatched ? "Remove from Watchlist" : "Add to Watchlist"}
+            >
+              {isWatched ? "❤️" : "🤍"}
+            </Button>
+          </div>
+
           <Card.Text className="text-muted">{item.description}</Card.Text>
           <hr className="my-4" />
 
