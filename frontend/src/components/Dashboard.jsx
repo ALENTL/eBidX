@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import {
   Container,
@@ -18,9 +18,55 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const socketRef = useRef(null);
+
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const socket = new WebSocket(
+      `ws://127.0.0.1:8000/ws/notifications/?token=${token}`,
+    );
+    socketRef.current = socket;
+
+    socket.onopen = () => console.log("Dashboard Live Updates Active");
+
+    socket.onmessage = (event) => {
+      const msgData = JSON.parse(event.data);
+      console.log("Dashboard Update:", msgData);
+
+      if (msgData.auction_id && msgData.new_price) {
+        updateBidStatus(msgData.auction_id, msgData.new_price);
+      }
+    };
+
+    return () => {
+      if (socketRef.current) socketRef.current.close();
+    };
+  }, []);
+
+  const updateBidStatus = (auctionId, newPrice) => {
+    setData((prevData) => {
+      const updatedBids = prevData.bids.map((bid) => {
+        if (bid.auction_item && bid.auction_item.id === auctionId) {
+          return {
+            ...bid,
+            auction_item: {
+              ...bid.auction_item,
+              current_price: newPrice,
+            },
+          };
+        }
+        return bid;
+      });
+
+      return { ...prevData, bids: updatedBids };
+    });
+  };
 
   const fetchDashboardData = async () => {
     const token = localStorage.getItem("token");
