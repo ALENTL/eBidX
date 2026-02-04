@@ -14,8 +14,15 @@ class AuctionConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     async def auction_update(self, event):
-        message = event["message"]
-        await self.send(text_data=json.dumps({"message": message}))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "message": event["message"],
+                    "current_price": event.get("current_price"),
+                    "highest_bidder": event.get("highest_bidder"),
+                }
+            )
+        )
 
 
 class NotificationConsumer(AsyncWebsocketConsumer):
@@ -30,6 +37,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
             await self.channel_layer.group_add(self.group_name, self.channel_name)
 
+            await self.accept()
+
     async def disconnect(self, close_code):
         if self.user and not self.user.is_anonymous:
             await self.channel_layer.group_discard(self.group_name, self.channel_name)
@@ -40,6 +49,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 {
                     "type": "notification",
                     "message": event["message"],
+                    "auction_id": event.get("auction_id"),
+                    "new_price": event.get("new_price"),
                     "link": event.get("link", ""),
                 }
             )
