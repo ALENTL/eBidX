@@ -51,8 +51,21 @@ const AuctionDetail = () => {
       console.log("WebSocket Connected");
     };
 
-    socket.onmessage = () => {
-      fetchAuctionData();
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.current_price) {
+        setItem((prev) => ({
+          ...prev,
+          current_price: data.current_price,
+          highest_bidder: data.highest_bidder,
+        }));
+
+        const currentUserId = parseInt(localStorage.getItem("user_id"));
+        if (data.highest_bidder && data.highest_bidder !== currentUserId) {
+          setBidSuccess("");
+        }
+      }
     };
 
     return () => {
