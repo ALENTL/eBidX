@@ -6,6 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from .models import AuctionItem, Bid, WatchList, Notification
 from .serializers import (
     AuctionItemSerializer,
@@ -75,18 +77,21 @@ class PlaceBid(APIView):
                 {"error": "Amount is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        highest_bid = auction.bids.order_by("-amount").first()
+        previous_highest_bid = auction.bids.order_by("-amount").first()
+        previous_highest_bidder = (
+            previous_highest_bid.bidder if previous_highest_bid else None
+        )
 
-        if highest_bid and highest_bid.bidder == request.user:
+        if previous_highest_bid and previous_highest_bidder == request.user:
             return Response(
                 {"error": "You are already the highest bidder"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         amount = float(amount)
-
-        highest_bid = auction.bids.order_by("-amount").first()
-        current_price = highest_bid.amount if highest_bid else auction.base_price
+        current_price = (
+            previous_highest_bid.amount if previous_highest_bid else auction.base_price
+        )
 
         if amount <= current_price:
             return Response(
@@ -97,6 +102,42 @@ class PlaceBid(APIView):
             )
 
         bid = Bid.objects.create(auction=auction, bidder=request.user, amount=amount)
+
+        channel_layer = get_channel_layer()
+
+        if auction.seller and auction.seller != request.user:
+            async_to_sync(channel_layer.group_send)(
+                f"user_{auction.seller.id}",
+                {
+                    "type": "send_notification",
+                    "message": f"New bid of ₹{amount} on '{auction.title}'",
+                    "auction_id": auction.id,
+                    "new_price": amount,
+                    "link": f"/auction/{auction.id}",
+                },
+            )
+
+        if previous_highest_bidder and previous_highest_bidder != request.user:
+            async_to_sync(channel_layer.group_send)(
+                f"user_{previous_highest_bidder.id}",
+                {
+                    "type": "send_notification",
+                    "message": f"⚠️ You have been outbid on '{auction.title}'!",
+                    "auction_id": auction.id,
+                    "new_price": amount,
+                    "link": f"/auction/{auction.id}",
+                },
+            )
+
+        async_to_sync(channel_layer.group_send)(
+            f"auction_{auction.id}",
+            {
+                "type": "auction_update",
+                "message": f"New bid: ₹{amount}",
+                "current_price": amount,
+                "highest_bidder": request.user.id,
+            },
+        )
 
         return Response(BidSerializer(bid).data, status=status.HTTP_201_CREATED)
 
