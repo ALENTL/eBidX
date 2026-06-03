@@ -174,7 +174,7 @@ const NavBar = () => {
   const NotificationBell = () => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="relative p-2 focus:outline-none bg-transparent border-none cursor-pointer text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors">
+        <button className="relative p-2 focus:outline-none bg-transparent border-none cursor-pointer text-slate-100 dark:text-slate-100 hover:text-slate-900 dark:hover:text-white transition-colors">
           <span className="text-xl">🔔</span>
           {unreadCount > 0 && (
             <Badge 
@@ -188,12 +188,12 @@ const NavBar = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80 max-h-96 overflow-y-auto bg-white/90 dark:bg-slate-950/90 backdrop-blur-lg border border-slate-200/50 dark:border-slate-800/50 rounded-2xl shadow-xl mt-2 z-[60]">
         <div className="flex items-center justify-between p-4">
-          <DropdownMenuLabel className="font-bold p-0 text-slate-900 dark:text-white">Notifications</DropdownMenuLabel>
+          <DropdownMenuLabel className="font-bold p-0 text-slate-100 dark:text-white">Notifications</DropdownMenuLabel>
           {notifications.length > 0 && (
             <Button
               variant="ghost"
               size="sm"
-              className="h-auto p-0 text-xs text-blue-600 dark:text-blue-400 hover:bg-transparent"
+              className="h-auto p-0 text-xs text-white dark:text-blue-400 hover:bg-transparent"
               onClick={handleClearAll}
             >
               Clear All
@@ -203,7 +203,7 @@ const NavBar = () => {
         <DropdownMenuSeparator className="dark:bg-slate-800" />
 
         {notifications.length === 0 ? (
-          <div className="p-8 text-center text-sm text-muted-foreground">
+          <div className="p-8 text-center text-sm text-white text-muted-foreground">
             No new notifications
           </div>
         ) : (
